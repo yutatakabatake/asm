@@ -1,0 +1,7 @@
+(executable
+ (public_name asm_project)
+ (name main)
+ (libraries asm_project))
+
+(ocamlyacc temple_parser)
+(ocamllex temple_lexer)
