@@ -27,5 +27,4 @@ rule token = parse
   | sd { SD }
   | ld { LD }
   | [' ' '\t'] { token lexbuf }
-  | '\n' { EOL }
   | eof { raise Eof }

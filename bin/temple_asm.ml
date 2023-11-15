@@ -11,7 +11,7 @@ and inst = SetiN of int
 
 let rec stm_to_string ast = 
           match ast with
-          | Line (s1,s2) -> inst_to_string s1 ^ ", " ^ stm_to_string s2
+          | Line (s1, s2) -> "Line (" ^ inst_to_string s1 ^ ", " ^ stm_to_string s2 ^ ")"
           | EOP -> "END"
 and inst_to_string e =
           match e with
