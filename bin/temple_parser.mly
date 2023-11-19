@@ -1,19 +1,19 @@
 %token<string> REG LABEL
 %token<int> NUM
-%token SETIN SETIL MOVE ADD NOR JL SD LD EOL
-%right NL
+%token SETIN SETIL MOVE ADD NOR JL SD LD EOF
+
 
 %start prog
 %type <Temple_asm.stm> prog
 
 %%
 
-prog: instrs EOL { $1 }
+prog: instrs EOF { print_string "PROG"; $1 }
       ;
  
 instrs
-      : NL { Temple_asm.EOP }
-      | instr NL instrs { Temple_asm.Line ($1,$3) }
+      : { Temple_asm.EOP }
+      | instr instrs { Temple_asm.Line ($1, $2) }
       ;
  
 instr 

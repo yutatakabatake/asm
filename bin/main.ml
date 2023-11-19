@@ -1,9 +1,4 @@
 let _ = 
-  try
-      let lexbuf = Lexing.from_channel stdin in
-          while true do
-              let rlt = Temple_parser.prog Temple_lexer.token lexbuf in
-              Temple_asm.print_ast rlt;
-              flush stdout
-          done
-  with Temple_lexer.Eof -> exit 0
+    let lexbuf = Lexing.from_channel stdin in
+    let rlt = Temple_parser.prog Temple_lexer.token lexbuf in
+    Temple_asm.print_ast rlt
