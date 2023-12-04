@@ -1,6 +1,6 @@
-%token<string> REG LABEL
+%token<string> REG LABEL 
 %token<int> NUM
-%token SETIN SETIL MOVE ADD NOR JL SD LD EOF
+%token SETIN SETIL MOVE ADD NOR JL SD LD EOF COLON
 
 
 %start prog
@@ -8,7 +8,7 @@
 
 %%
 
-prog: instrs EOF { print_string "PROG"; $1 }
+prog: instrs EOF { $1 }
       ;
  
 instrs
@@ -25,4 +25,7 @@ instr
       | JL REG NUM REG { Temple_asm.Jl ($2,$3,$4) }
       | SD REG { Temple_asm.Sd $2 }
       | LD REG { Temple_asm.Ld $2 }
+      | LABEL COLON { Temple_asm.Label $1 } 
       ;
+
+%%
