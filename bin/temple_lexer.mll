@@ -12,6 +12,7 @@ let nor = ['N''n']['O''o']['R''r']
 let jl = ['J''j']['L''l']
 let sd = ['S''s']['D''d']
 let ld = ['L''l']['D''d']
+let srl = ['S''s']['R''r']['L''l']
  
 rule token = parse
   | setin { SETIN }
@@ -22,6 +23,7 @@ rule token = parse
   | jl { JL }
   | sd { SD }
   | ld { LD }
+  | srl { SRL }
   | label as str { LABEL (String.uppercase_ascii str) }
   | "$m" num as str { REG str }
   | num as vl { NUM (int_of_string vl) }

@@ -4,3 +4,4 @@ SETIL hajime
 MOVE $m1
 hajime : SETIN 2000
 move $m2
+srl

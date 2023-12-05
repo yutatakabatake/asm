@@ -8,6 +8,7 @@ and inst = SetiN of int
          | Jl of string * int * string
          | Sd of string
          | Ld of string
+         | Srl
          | Label of string
 
 type info_label = { label:string; address:int }
@@ -23,7 +24,21 @@ let byte_size i =
   | Jl _ -> 2
   | Sd _ -> 1
   | Ld _ -> 1
+  | Srl -> 1
   | _ -> 0
+
+let ope_code i = 
+  match i with
+  | Nor _ -> 000
+  | Add _ -> 001
+  | Ld _ -> 010
+  | Move _ -> 011
+  | Sd _ -> 100
+  | SetiL _ -> 101
+  | SetiN _ -> 101
+  | Jl _ -> 110
+  | Srl -> 111
+  | _ -> 999
 
 (*
 let rec stm_to_string ast = 
@@ -58,6 +73,7 @@ and inst_to_string2 e =
   | Jl (e1, e2, e3) -> "\tJL " ^ "\t" ^ e1 ^ "\t"  ^ string_of_int e2 ^ "\t"  ^ e3
   | Sd v -> "\tSD "  ^ "\t" ^ v 
   | Ld v -> "\tLD "  ^ "\t" ^ v
+  | Srl -> "\tSRL"
   | Label v -> v ^ ":"
 
 let print_ast2 ast = print_string (stm_to_string2 ast)
@@ -81,7 +97,7 @@ let rec make_record stm : (info_label list * info_address list) =
     | _ -> (ls, {address = n; inst = i}::is)
 
 let print_ls ls = List.iter (fun r -> print_string (r.label ^ "\t" ^ string_of_int r.address ^ "\n")) ls
- 
+
 let print_is is = List.iter (fun r -> print_string (string_of_int r.address ^ "\t" ^ inst_to_string2 r.inst ^ "\n")) is
 
 let print_record stm = let (ls, is) = make_record stm in
