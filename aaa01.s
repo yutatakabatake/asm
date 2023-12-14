@@ -6,3 +6,4 @@ label01 :
 hajime : SETIN 2000
 move $m2
 srl
+setin 0

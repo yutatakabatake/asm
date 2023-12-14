@@ -90,16 +90,17 @@ let rec stm_to_string2 ast =
   | EOP -> "\tEND\n"
 and inst_to_string2 e =
   match e with
-  | SetiN n -> "\tSETI " ^ "\t" ^ string_of_int n ^ "\t\t\t"
-  | SetiL v -> "\tSETI " ^ "\t" ^ v ^ "\t\t\t"
-  | Move v -> "\tMOVE " ^ "\t" ^ v ^ "\t\t\t"
-  | Add v ->  "\tADD " ^ "\t" ^ v ^ "\t\t\t"
-  | Nor v -> "\tNOR " ^ "\t" ^ v ^ "\t\t\t"
-  | Jl (e1, e2, e3) -> "\tJL " ^ "\t" ^ e1 ^ "\t"  ^ string_of_int e2 ^ "\t"  ^ e3 ^ "\t"
-  | Sd v -> "\tSD "  ^ "\t" ^ v ^ "\t\t\t"
-  | Ld v -> "\tLD "  ^ "\t" ^ v ^ "\t\t\t"
-  | Srl -> "\tSRL" ^ "\t\t\t\t"
-  | Label v -> v ^ ":\t\t\t\t\t"
+  | SetiN n -> if n > 999 then "\tSETI " ^ "\t" ^ string_of_int n 
+               else "\t\tSETI " ^ "\t" ^ string_of_int n 
+  | SetiL v -> "\t\t\tSETI " ^ "\t" ^ v
+  | Move v -> "\t\t\tMOVE " ^ "\t" ^ v
+  | Add v ->  "\t\t\tADD " ^ "\t" ^ v
+  | Nor v -> "\t\t\tNOR " ^ "\t" ^ v
+  | Jl (e1, e2, e3) -> "\t\t\tJL " ^ "\t" ^ e1 ^ "\t"  ^ string_of_int e2 ^ "\t"  ^ e3
+  | Sd v -> "\t\t\tSD "  ^ "\t" ^ v
+  | Ld v -> "\t\t\tLD "  ^ "\t" ^ v
+  | Srl -> "\t\t\tSRL"
+  | Label v -> "\t\t" ^ v ^ ":"
 
 let print_ast2 ast = print_string (stm_to_string2 ast)
 
@@ -129,9 +130,6 @@ let print_record stm = let (ls, is) = make_record stm in
                         print_ls ls ;
                         print_is is
 
-
-
-
 let make_record2 stm : info_inst_type list = let (ls, is) = make_record stm in
                                               let it = [] in 
                                                 let rec f t = 
@@ -145,9 +143,9 @@ let print_record2 stm = let (_, is) = make_record stm in
                         let it = make_record2 stm in
                         let rec f is it =
                           match (is, it) with
-                          |(h_is::t_is, h_it::t_it) -> print_string (string_of_int h_is.address ^ "\t" ^ inst_to_string2 h_is.insts ^ "\t");
-                                                       print_string (inst_type_to_string h_it.inst_type ^ "\t");
-                                                       print_string (inst_type_to_num h_it.inst_type ^ "\n");
+                          |(h_is::t_is, h_it::t_it) -> print_string (string_of_int h_it.addressi ^ "\t" ^ inst_type_to_string h_it.inst_type ^ "\t");
+                                                       print_string (inst_type_to_num h_it.inst_type ^ "\t");
+                                                       print_string (inst_to_string2 h_is.insts ^ "\n");
                                                        f t_is t_it
-                          | _ -> print_string "\t\tEND\n"
+                          | _ -> print_string "\t\t\t\t\t\tEND\n"
                         in f is it
