@@ -36,7 +36,7 @@ let rec look_up_label info_labels label =
   match info_labels with
   | [] -> 0
   | { label = l; addressl = a }::t -> if l = label then a 
-                                     else look_up_label t label
+                                      else look_up_label t label
 
 let judge_inst_type i info_labels = 
   match i with
@@ -54,35 +54,43 @@ let judge_inst_type i info_labels =
 let inst_type_to_string i =
    match i with
    | None -> ""
-   | Some(TypeF(n1, n2)) -> string_of_int n1 ^ ":" ^ string_of_int n2
+   | Some(TypeF(n1, n2)) -> string_of_int n1 ^ ":" ^ string_of_int n2 ^ "\t"
    | Some(TypeJ(n1, n2, n3, n4)) -> string_of_int n1 ^ ":" ^ string_of_int n2 ^ ":" ^ string_of_int n3 ^ ":" ^ string_of_int n4
-   | Some(TypeI(n1, n2, n3)) -> string_of_int n1 ^ ":" ^ string_of_int n2 ^ ":" ^ string_of_int n3
+   | Some(TypeI(n1, n2, n3)) -> if n3 <= 999 then string_of_int n1 ^ ":" ^ string_of_int n2 ^ ":" ^ string_of_int n3 ^ "\t"
+                                else string_of_int n1 ^ ":" ^ string_of_int n2 ^ ":" ^ string_of_int n3
 
 let inst_type_to_num i = 
   match i with
-  | Some(TypeF(n1, n2)) -> string_of_int (32 * n1 + n2)
+  | Some(TypeF(n1, n2)) -> string_of_int (32 * n1 + n2) ^ "\t"
   | Some(TypeJ(n1, n2, n3, n4)) -> string_of_int (32 * n1 + n2) ^ ":" ^ string_of_int (32 * n3 + n4)
-  | Some(TypeI(n1, n2, n3)) -> string_of_int (32 * n1 + n2) ^ ":" ^ string_of_int (n3 / 256) ^ ":" ^ string_of_int (n3 mod 256)
+  | Some(TypeI(n1, n2, n3)) -> if (n3 mod 256) <= 99 then string_of_int (32 * n1 + n2) ^ ":" ^ string_of_int (n3 / 256) ^ ":" ^ string_of_int (n3 mod 256) ^ "\t"
+  else string_of_int (32 * n1 + n2) ^ ":" ^ string_of_int (n3 / 256) ^ ":" ^ string_of_int (n3 mod 256)
   | None -> ""
 
-(*
-let rec stm_to_string ast = 
-          match ast with
-          | Line (s1, s2) -> "Line (" ^ inst_to_string s1 ^ ", " ^ stm_to_string s2 ^ ")"
-          | EOP -> "END"
-and inst_to_string e =
-          match e with
-          | SetiN n -> "SETI " ^ string_of_int n
-          | SetiL v -> "SETI " ^ v
-          | Move v -> "MOVE " ^ v 
-          | Add v ->  "ADD " ^ v
-          | Nor v -> "NOR " ^ v 
-          | Jl (e1, e2, e3) -> "JL " ^ e1 ^ string_of_int e2 ^ e3
-          | Sd v -> "SD " ^ v 
-          | Ld v -> "LD " ^ v
+let f num n = 
+  let num1 = num lsr n in
+  let num2 = num1 land 1 in
+  string_of_int num2
 
-let print_ast ast = print_string (stm_to_string ast)
-*)
+let g num =
+  let rec ff num n = 
+    if n > 0 then f num n ^ ff num (n-1)
+    else f num n
+  in ff num 7
+
+let inst_type_to_8bit1 i = 
+  match i with
+  | Some(TypeF(n1, n2)) -> g (32 * n1 + n2)
+  | Some(TypeJ(n1, n2, n3, n4)) -> g (32 * n1 + n2) ^ ":" ^ g (32 * n3 + n4)
+  | Some(TypeI(n1, n2, n3)) -> g (32 * n1 + n2) ^ ":" ^ g (n3 / 256) ^ ":" ^ g (n3 mod 256)
+  | None -> ""
+
+let inst_type_to_8bit2 i = 
+  match i with
+  | Some(TypeF(n1, n2)) -> g (32 * n1 + n2) ^ "\n"
+  | Some(TypeJ(n1, n2, n3, n4)) -> g (32 * n1 + n2) ^ "\n" ^ g (32 * n3 + n4) ^ "\n"
+  | Some(TypeI(n1, n2, n3)) -> g (32 * n1 + n2) ^ "\n" ^ g (n3 / 256) ^ "\n" ^ g (n3 mod 256) ^ "\n"
+  | None -> ""
 
 let rec stm_to_string2 ast = 
   match ast with
@@ -91,16 +99,16 @@ let rec stm_to_string2 ast =
 and inst_to_string2 e =
   match e with
   | SetiN n -> if n > 999 then "\tSETI " ^ "\t" ^ string_of_int n 
-               else "\t\tSETI " ^ "\t" ^ string_of_int n 
-  | SetiL v -> "\t\t\tSETI " ^ "\t" ^ v
+               else "\tSETI " ^ "\t" ^ string_of_int n 
+  | SetiL v -> "\tSETI " ^ "\t" ^ v
   | Move v -> "\t\t\tMOVE " ^ "\t" ^ v
   | Add v ->  "\t\t\tADD " ^ "\t" ^ v
   | Nor v -> "\t\t\tNOR " ^ "\t" ^ v
-  | Jl (e1, e2, e3) -> "\t\t\tJL " ^ "\t" ^ e1 ^ "\t"  ^ string_of_int e2 ^ "\t"  ^ e3
+  | Jl (e1, e2, e3) -> "\t\tJL " ^ "\t" ^ e1 ^ "\t"  ^ string_of_int e2 ^ "\t"  ^ e3
   | Sd v -> "\t\t\tSD "  ^ "\t" ^ v
   | Ld v -> "\t\t\tLD "  ^ "\t" ^ v
   | Srl -> "\t\t\tSRL"
-  | Label v -> "\t\t" ^ v ^ ":"
+  | Label v -> "\t\t\t\t\t" ^ v ^ ":"
 
 let print_ast2 ast = print_string (stm_to_string2 ast)
 
@@ -145,7 +153,16 @@ let print_record2 stm = let (_, is) = make_record stm in
                           match (is, it) with
                           |(h_is::t_is, h_it::t_it) -> print_string (string_of_int h_it.addressi ^ "\t" ^ inst_type_to_string h_it.inst_type ^ "\t");
                                                        print_string (inst_type_to_num h_it.inst_type ^ "\t");
+                                                       print_string (inst_type_to_8bit1 h_it.inst_type ^ "\t");
                                                        print_string (inst_to_string2 h_is.insts ^ "\n");
                                                        f t_is t_it
-                          | _ -> print_string "\t\t\t\t\t\tEND\n"
+                          | _ -> print_string "\t\t\t\t\t\t\t\t\t\tEND\n"
                         in f is it
+
+let print_record3 stm = let it = make_record2 stm in
+                        let rec f it =
+                          match it with
+                          |h_it::t_it -> print_string (inst_type_to_8bit2 h_it.inst_type);
+                                                       f t_it
+                          | _ -> print_string "END\n"
+                        in f it
