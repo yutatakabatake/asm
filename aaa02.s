@@ -1,1 +1,1 @@
-SETIN 1000 MOVE $m0 SETIL hajime MOVE $m1 JL $m2 100 $m3
+SETIN 1000 MOVE $m0 SETIL haji_me MOVE $m1 JL $m2 100 $m3
