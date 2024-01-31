@@ -1,13 +1,23 @@
 #!/bin/sh
+#このファイルがvendor/templeEX/programsにあることを仮定している
+set -x
+TESTDIR=`pwd`
+ASMDIR=$TESTDIR/../../../
+TEMPLEDIR=$TESTDIR/../original
+
+cd ${ASMDIR}
+dune exec asm_project < ${TESTDIR}/$1.asm > ${TESTDIR}/$1.dat
+
+cd ${TESTDIR}
 
 rm *.vcd
 rm a.out
 
-cd ../original
+cd ${TEMPLEDIR}
 
-iverilog -o ../programs/a.out *.v ../programs/$1_testfix.v
+iverilog -o ${TESTDIR}/a.out *.v ${TESTDIR}/$1_testfix.v
 
-cd ../programs
+cd ${TESTDIR}
 ./a.out
 
 # gtkwave testfix.vcd &
