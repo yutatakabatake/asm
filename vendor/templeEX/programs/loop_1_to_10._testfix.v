@@ -22,7 +22,7 @@ module testfix;
     $dumpfile("testfix.vcd");  //GTKwaveで波形表示する為の記述
     $dumpvars(0, testfix);  //GTKwaveで波形表示する為の記述
 
-    $readmemb("../programs/aaa1.dat", memory.mem);
+    $readmemb("../programs/loop_1_to_10.dat", memory.mem);
 
     {memory.mem[1001], memory.mem[1000]} = 16'h9;
     {memory.mem[1003], memory.mem[1002]} = 16'h8;
@@ -46,7 +46,7 @@ module testfix;
       #STEP;
     end
 
-    F_HANDLE = $fopen("dump.log");
+    F_HANDLE = $fopen("loop_1_to_10.txt");
     $fwrite(F_HANDLE, "cycle = %d\n", i);
     for (i = 1000; i < 1020; i = i + 2) begin
       $fwrite(F_HANDLE, "mem[%6d] = %d\n", i, $unsigned({memory.mem[i+1], memory.mem[i]}));
