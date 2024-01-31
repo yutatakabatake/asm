@@ -169,12 +169,12 @@ let print_record2 stm = let (_, is) = make_record stm in
                         let it = make_record2 stm in
                         let rec f is it =
                           match (is, it) with
-                          |(h_is::t_is, h_it::t_it) -> print_string (string_of_int h_it.addressi ^ "\t" ^ inst_type_to_string h_it.inst_type ^ "\t");
+                          |(h_is::t_is, h_it::t_it) -> print_string ("//" ^ string_of_int h_it.addressi ^ "\t" ^ inst_type_to_string h_it.inst_type ^ "\t");
                                                        print_string (inst_type_to_num h_it.inst_type ^ "\t");
                                                        print_string (inst_type_to_8bit1 h_it.inst_type ^ "\t");
                                                        print_string (inst_to_string2 h_is.insts ^ "\n");
                                                        f t_is t_it
-                          | _ -> print_string "\t\t\t\t\t\t\t\t\t\tEND\n"
+                          | _ -> print_string "//\t\t\t\t\t\t\t\t\t\tEND\n"
                         in f is it
 
 let print_record3 stm = let (_, is) = make_record stm in
