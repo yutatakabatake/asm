@@ -8,7 +8,9 @@ move $m2
 nor $m2
 add $m30
 add $m0
-jl $m28 110 break
+seti break
+move $m4
+jl $m28 110 $m4
 nor $m31
 add $m1
 add $m0
@@ -17,7 +19,9 @@ nor $m31
 add $m0
 add $m29
 move $m0
-jl $m28 000 branch
+seti branch
+move $m5
+jl $m28 000 $m5
 break:
 seti 1000
 move $m3
