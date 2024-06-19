@@ -132,6 +132,7 @@ let print_ast2 ast = print_string (stm_to_string2 ast)
 let label_to_string i =
   match i with
   | Label v -> v
+  | Jllabel (_, _, e3) -> e3
   | _ -> "error"
 
 let rec make_record stm : (info_label list * info_address list) =
@@ -145,6 +146,7 @@ let rec make_record stm : (info_label list * info_address list) =
   and f' i n (ls, is) =
     match i with
     | Label _ -> ({label = label_to_string i; addressl = n}::ls,{address = n; insts = i}::is)
+    | Jllabel (_, _, _) -> ({label = label_to_string i; addressl = n}::ls,{address = n; insts = i}::is)
     | _ -> (ls, {address = n; insts = i}::is)
 
 let print_ls ls = List.iter (fun r -> print_string (r.label ^ "\t" ^ string_of_int r.addressl ^ "\n")) ls
@@ -165,6 +167,7 @@ let make_record2 stm : info_inst_type list = let (ls, is) = make_record stm in
 
 let print_info_inst_type_list stm = List.iter (fun r -> print_string (string_of_int r.addressi ^ "\t" ^ inst_type_to_string r.inst_type ^ "\n")) (make_record2 stm)
 
+(* アドレス等を同時に表示 *)
 let print_record2 stm = let (_, is) = make_record stm in
                         let it = make_record2 stm in
                         let rec f is it =
@@ -177,6 +180,7 @@ let print_record2 stm = let (_, is) = make_record stm in
                           | _ -> print_string "//\t\t\t\t\t\t\t\t\t\tEND\n"
                         in f is it
 
+(* バイナリとコメントで元の命令を表示 *)
 let print_record3 stm = let (_, is) = make_record stm in
                         let it = make_record2 stm in
                         let rec f is it =
