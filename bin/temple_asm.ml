@@ -80,6 +80,7 @@ let g num =
     else f num n
   in ff num 7
 
+(* アドレス等を表示する用　区切りが: *)
 let inst_type_to_8bit1 i = 
   match i with
   | Some(TypeF(n1, n2)) -> g (32 * n1 + n2)
@@ -87,6 +88,7 @@ let inst_type_to_8bit1 i =
   | Some(TypeI(n1, n2, n3)) -> g (32 * n1 + n2) ^ ":" ^ g (n3 mod 256) ^ ":" ^ g (n3 / 256) (*n2,n3が間違ってる*)
   | None -> ""
 
+(* バイナリを表示する用　区切りが改行 *)
 let inst_type_to_8bit2 i = 
   match i with
   | Some(TypeF(n1, n2)) -> g (32 * n1 + n2)
@@ -157,7 +159,7 @@ let print_record stm = let (ls, is) = make_record stm in
                         print_ls ls ;
                         print_is is
 
-let make_record2 stm : info_inst_type list = let (ls, is) = make_record stm in
+let make_info_inst_type_list stm : info_inst_type list = let (ls, is) = make_record stm in
                                               let it = [] in 
                                                 let rec f t = 
                                                   match t with 
@@ -165,11 +167,11 @@ let make_record2 stm : info_inst_type list = let (ls, is) = make_record stm in
                                                   | { address= a; insts= i }::t -> { addressi = a; inst_type = judge_inst_type i ls }::(f t) 
                                                 in f is
 
-let print_info_inst_type_list stm = List.iter (fun r -> print_string (string_of_int r.addressi ^ "\t" ^ inst_type_to_string r.inst_type ^ "\n")) (make_record2 stm)
+let print_info_inst_type_list stm = List.iter (fun r -> print_string (string_of_int r.addressi ^ "\t" ^ inst_type_to_string r.inst_type ^ "\n")) (make_info_inst_type_list stm)
 
 (* アドレス等を同時に表示 *)
 let print_record2 stm = let (_, is) = make_record stm in
-                        let it = make_record2 stm in
+                        let it = make_info_inst_type_list stm in
                         let rec f is it =
                           match (is, it) with
                           |(h_is::t_is, h_it::t_it) -> print_string ("//" ^ string_of_int h_it.addressi ^ "\t" ^ inst_type_to_string h_it.inst_type ^ "\t");
@@ -181,8 +183,8 @@ let print_record2 stm = let (_, is) = make_record stm in
                         in f is it
 
 (* バイナリとコメントで元の命令を表示 *)
-let print_record3 stm = let (_, is) = make_record stm in
-                        let it = make_record2 stm in
+let print_bin stm = let (_, is) = make_record stm in
+                        let it = make_info_inst_type_list stm in
                         let rec f is it =
                           match (is, it) with
                           |(h_is::t_is, h_it::t_it) -> print_string (inst_type_to_8bit2 h_it.inst_type);
