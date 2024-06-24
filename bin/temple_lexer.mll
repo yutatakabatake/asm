@@ -28,5 +28,5 @@ rule token = parse
   | num as vl { NUM (int_of_string vl) }
   | ":" { COLON }
   | [' ' '\t' '\n' '\r'] { token lexbuf }
-  | comment { print_string (Lexing.lexeme lexbuf ^ "\n");token lexbuf }
+  | comment { token lexbuf }
   | eof { EOF }
