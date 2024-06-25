@@ -137,6 +137,7 @@ let label_to_string i =
   | Jllabel (_, _, e3) -> e3
   | _ -> "error"
 
+(* labelとinstとそれぞれのアドレスを格納 *)
 let rec make_record stm : (info_label list * info_address list) =
   let rec f stm n =
    match stm with
