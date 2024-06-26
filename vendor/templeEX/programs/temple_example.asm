@@ -12,11 +12,4 @@ MOVE $m4
 SETI 0
 ADD $m3
 SD $m4
-
-// SETI 1006
-// MOVE $m5
-// SETI 2
-// ADD $m3 
-// SD $m5
-
 JL $m31 111 $m28
